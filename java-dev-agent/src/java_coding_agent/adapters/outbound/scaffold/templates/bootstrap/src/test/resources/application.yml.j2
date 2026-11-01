@@ -1,0 +1,12 @@
+# bootstrap 模組測試設定（@SpringBootTest / Cucumber）：
+# - schema 由 Hibernate 在 Testcontainers PostgreSQL 上建立並於 context 關閉時移除
+# - 錯誤回應包含 message，方便驗收測試斷言錯誤內容
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+server:
+  error:
+    include-message: always
+    include-binding-errors: always

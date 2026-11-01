@@ -1,0 +1,18 @@
+package {{ base_package }}.bdd;
+
+import {{ base_package }}.bootstrap.TestcontainersConfiguration;
+import io.cucumber.spring.CucumberContextConfiguration;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+
+/**
+ * 讓 Cucumber 步驟類別共用一個 Spring Boot 測試 context（隨機 port + Testcontainers PostgreSQL）。
+ * 步驟類別以建構子注入 {@code TestRestTemplate} 呼叫實際 API。
+ */
+@CucumberContextConfiguration
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestRestTemplate // Spring Boot 4 不再自動註冊 TestRestTemplate，需明確宣告
+@Import(TestcontainersConfiguration.class)
+public class CucumberSpringConfiguration {
+}

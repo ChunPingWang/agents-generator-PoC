@@ -1,0 +1,8 @@
+package {{ base_package }}.adapter.web;
+
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/** 讓 {@code @WebMvcTest} 在本模組找到 Spring Boot 設定類別（只掃描 adapter.web 套件）。 */
+@SpringBootApplication
+public class WebTestApplication {
+}

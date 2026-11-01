@@ -1,0 +1,49 @@
+import java.time.Duration
+
+// 由 Java Coding Agent 產生的專案骨架。LLM 不得修改此檔。
+plugins {
+    java
+    id("org.springframework.boot") version "{{ spring_boot_version }}" apply false
+}
+
+allprojects {
+    group = "{{ base_package }}"
+    version = "0.1.0-SNAPSHOT"
+    repositories { mavenCentral() }
+}
+
+subprojects {
+    apply(plugin = "java")
+
+    java {
+        toolchain { languageVersion = JavaLanguageVersion.of(17) }
+    }
+
+    dependencies {
+        // 所有模組共用的測試基礎：JUnit Jupiter 6、AssertJ、Mockito（版本由 Spring Boot BOM 管理）
+        "testImplementation"(platform("org.springframework.boot:spring-boot-dependencies:{{ spring_boot_version }}"))
+        "testImplementation"("org.junit.jupiter:junit-jupiter")
+        "testImplementation"("org.assertj:assertj-core")
+        "testImplementation"("org.mockito:mockito-core")
+        "testImplementation"("org.mockito:mockito-junit-jupiter")
+        "testRuntimeOnly"("org.junit.platform:junit-platform-launcher")
+    }
+
+    tasks.withType<JavaCompile>().configureEach {
+        options.encoding = "UTF-8"
+        options.compilerArgs.add("-parameters")
+    }
+
+    tasks.withType<Test>().configureEach {
+        useJUnitPlatform()
+        // 尚未有測試的模組（TDD 剛開始）不應讓建置失敗
+        failOnNoDiscoveredTests = false
+        // 測試 JVM 偶爾在 Testcontainers 下卡住不結束；單一模組的測試不應超過 10 分鐘
+        timeout.set(Duration.ofMinutes(10))
+        testLogging {
+            events("failed", "skipped")
+            exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+            showStandardStreams = false
+        }
+    }
+}

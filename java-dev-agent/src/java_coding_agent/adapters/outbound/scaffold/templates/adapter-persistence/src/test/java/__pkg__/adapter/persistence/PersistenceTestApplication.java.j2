@@ -1,0 +1,13 @@
+package {{ base_package }}.adapter.persistence;
+
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Import;
+
+/**
+ * 讓 {@code @DataJpaTest} 在本模組找到 Spring Boot 設定類別，並一律掛上 Testcontainers PostgreSQL，
+ * 測試類別不必再 {@code @Import(TestcontainersConfiguration.class)}。
+ */
+@SpringBootApplication
+@Import(TestcontainersConfiguration.class)
+public class PersistenceTestApplication {
+}

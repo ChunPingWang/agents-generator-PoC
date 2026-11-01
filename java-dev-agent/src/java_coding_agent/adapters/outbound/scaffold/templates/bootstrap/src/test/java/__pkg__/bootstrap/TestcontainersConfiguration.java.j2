@@ -1,0 +1,17 @@
+package {{ base_package }}.bootstrap;
+
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.context.annotation.Bean;
+import org.testcontainers.postgresql.PostgreSQLContainer;
+
+/** 測試用 PostgreSQL 容器；以 {@code @ServiceConnection} 自動注入連線設定。 */
+@TestConfiguration(proxyBeanMethods = false)
+public class TestcontainersConfiguration {
+
+    @Bean
+    @ServiceConnection
+    PostgreSQLContainer postgres() {
+        return new PostgreSQLContainer("postgres:16-alpine");
+    }
+}

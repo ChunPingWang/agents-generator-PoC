@@ -1,0 +1,27 @@
+package {{ base_package }}.bootstrap;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Import;
+
+/**
+ * 骨架自帶：驗證完整 Spring context（含 JPA、adapter 與 UseCaseConfiguration 的 bean）可啟動。
+ * bootstrap 組裝任務只需在 UseCaseConfiguration 加入 @Bean，不必再寫 context 測試。
+ */
+@SpringBootTest
+@Import(TestcontainersConfiguration.class)
+class ApplicationContextTest {
+
+    @Autowired
+    private ApplicationContext context;
+
+    @Test
+    void context_loads_with_all_beans() {
+        assertThat(context).isNotNull();
+        assertThat(context.getBean(UseCaseConfiguration.class)).isNotNull();
+    }
+}

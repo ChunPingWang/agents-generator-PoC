@@ -1,0 +1,29 @@
+package {{ base_package }}.bdd;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import io.cucumber.java.zh_tw.當;
+import io.cucumber.java.zh_tw.那麼;
+import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.http.ResponseEntity;
+
+/** 骨架自帶的煙霧測試步驟：確認應用程式可啟動並回應 HTTP。 */
+public class SmokeSteps {
+
+    private final TestRestTemplate rest;
+    private ResponseEntity<String> response;
+
+    public SmokeSteps(TestRestTemplate rest) {
+        this.rest = rest;
+    }
+
+    @當("煙霧測試呼叫 GET {string}")
+    public void call_get(String path) {
+        response = rest.getForEntity(path, String.class);
+    }
+
+    @那麼("煙霧測試回應狀態碼為 {int}")
+    public void status_is(int status) {
+        assertThat(response.getStatusCode().value()).isEqualTo(status);
+    }
+}

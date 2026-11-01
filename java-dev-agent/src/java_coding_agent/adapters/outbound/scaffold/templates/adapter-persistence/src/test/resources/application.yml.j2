@@ -1,0 +1,10 @@
+# adapter-persistence 模組測試設定：@DataJpaTest 搭配 Testcontainers PostgreSQL 時，
+# 連線由 @ServiceConnection 提供，但 schema 需由 Hibernate 建立。
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false

@@ -1,0 +1,17 @@
+package {{ base_package }};
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/**
+ * 應用程式進入點。置於基底套件根目錄，使 Spring Boot 的元件掃描、JPA Entity 掃描與
+ * Spring Data Repository 掃描自然涵蓋所有 adapter 與 bootstrap 子套件。
+ * domain 與 application 不含 Spring 註解，由 {@code bootstrap.UseCaseConfiguration} 以 {@code @Bean} 組裝。
+ */
+@SpringBootApplication
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}

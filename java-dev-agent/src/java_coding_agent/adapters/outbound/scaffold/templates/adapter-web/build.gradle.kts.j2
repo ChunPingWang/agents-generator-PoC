@@ -1,0 +1,13 @@
+// adapter-web：Spring MVC inbound adapter。
+plugins { `java-library` }
+
+dependencies {
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:{{ spring_boot_version }}"))
+    implementation(project(":application"))
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-json")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+}

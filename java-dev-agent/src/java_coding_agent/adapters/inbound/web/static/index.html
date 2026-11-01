@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>Java Coding Agent</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header>
+  <h1>Java Coding Agent</h1>
+  <div id="status" class="muted">連線中…</div>
+</header>
+<main>
+  <section id="chat">
+    <div id="messages" aria-live="polite"></div>
+    <form id="composer">
+      <textarea id="input" rows="3" placeholder="輸入業務需求（例如：開發一個 backend 服務，可以新增、修改、刪除、查詢的個人資料服務），或管理指令（例如：顯示目前的 System Prompt）" required></textarea>
+      <div class="row">
+        <button type="submit" id="send">送出</button>
+        <button type="button" id="newConv" class="secondary">新對話</button>
+      </div>
+    </form>
+  </section>
+  <aside id="side">
+    <h2>設定</h2>
+    <dl id="settings"></dl>
+    <h2>SDD 執行</h2>
+    <div id="runs"></div>
+  </aside>
+</main>
+<template id="runTpl">
+  <article class="run">
+    <header><span class="stage"></span> <code class="rid"></code></header>
+    <p class="req"></p>
+    <ol class="tasks"></ol>
+    <ul class="events"></ul>
+    <p class="pr"></p>
+  </article>
+</template>
+<script src="/static/app.js"></script>
+</body>
+</html>

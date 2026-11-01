@@ -1,0 +1,19 @@
+# {{ project_name }}
+
+由 Java Coding Agent 依 Spec-Driven Development 產生的 Spring Boot 4 專案（六角形架構）。
+
+## 模組
+- `domain`：純 Java 領域模型
+- `application`：use cases 與 ports
+- `adapter-web`：REST API（Spring MVC）
+- `adapter-persistence`：JPA + PostgreSQL
+- `bootstrap`：Spring Boot 進入點、ArchUnit 架構測試、Cucumber 驗收測試
+
+## 建置與測試
+```bash
+./gradlew test          # 需要 JDK 17 與 Docker（Testcontainers）
+./gradlew :bootstrap:bootRun
+```
+
+## 規格
+每個功能的 spec / plan / tasks 位於 `specs/<id>-<slug>/`。

@@ -1,0 +1,104 @@
+[project]
+name = "java-coding-agent"
+version = "0.1.0"
+description = "LangChain agent that turns business requirements into Spring Boot 4 / hexagonal Java code via Spec-Driven Development, with Langfuse observability."
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "langchain>=1.4,<2",
+  "langchain-core>=1.7,<2",
+  "langchain-ollama>=1.1,<2",
+  "langchain-openai>=1.0,<2",
+  "langchain-anthropic>=1.0,<2",
+  "langgraph>=1.2,<2",
+  "langfuse>=5.1,<6",
+  "fastapi>=0.162,<1",
+  "uvicorn[standard]>=0.54,<1",
+  "sse-starlette>=3.6,<4",
+  "sqlalchemy>=2.1,<3",
+  "psycopg[binary]>=3.3,<4",
+  "pydantic>=2.11,<3",
+  "pydantic-settings>=2.16,<3",
+  "PyGithub>=2.10,<3",
+  "GitPython>=3.2,<4",
+  "jinja2>=3.1,<4",
+  "httpx>=0.28,<1",
+  "python-multipart>=0.0.20",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=9,<9.2",  # pytest-bdd 9.0.0 尚未支援 pytest 9.2 的 FixtureManager 變更
+  "pytest-asyncio>=1.4,<2",
+  "pytest-bdd>=9.0,<10",
+  "pytest-cov>=7,<8",
+  "testcontainers[postgres]>=4.15,<5",
+  "ruff>=0.17,<1",
+  "mypy>=2.4,<3",
+  "import-linter>=2.5,<3",
+]
+
+[project.scripts]
+java-coding-agent = "java_coding_agent.main:run"
+java-coding-agent-eval = "java_coding_agent.evaluation.runner:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/java_coding_agent"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+  "integration: needs Docker (Testcontainers) or a live Ollama",
+  "live_llm: needs a running Ollama with the configured model",
+]
+addopts = "-m 'not integration and not live_llm'"
+bdd_features_base_dir = "tests/bdd/features"
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "N"]
+
+[tool.mypy]
+python_version = "3.13"
+packages = ["java_coding_agent"]
+mypy_path = "src"
+ignore_missing_imports = true
+check_untyped_defs = true
+
+# Hexagonal dependency rules for the agent itself (enforced in CI via `lint-imports`).
+[tool.importlinter]
+root_package = "java_coding_agent"
+
+[[tool.importlinter.contracts]]
+name = "Domain depends on nothing inside the app"
+type = "forbidden"
+source_modules = ["java_coding_agent.domain"]
+forbidden_modules = [
+  "java_coding_agent.application",
+  "java_coding_agent.adapters",
+  "java_coding_agent.config",
+  "java_coding_agent.main",
+  "java_coding_agent.evaluation",
+]
+
+[[tool.importlinter.contracts]]
+name = "Application depends only on domain"
+type = "forbidden"
+source_modules = ["java_coding_agent.application"]
+forbidden_modules = ["java_coding_agent.adapters", "java_coding_agent.main", "java_coding_agent.config"]
+
+[[tool.importlinter.contracts]]
+name = "Inbound adapters never import outbound adapters"
+type = "forbidden"
+source_modules = ["java_coding_agent.adapters.inbound"]
+forbidden_modules = ["java_coding_agent.adapters.outbound"]

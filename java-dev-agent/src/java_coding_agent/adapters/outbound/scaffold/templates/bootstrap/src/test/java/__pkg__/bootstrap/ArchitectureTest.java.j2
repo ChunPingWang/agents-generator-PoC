@@ -1,0 +1,48 @@
+package {{ base_package }}.bootstrap;
+
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
+
+import com.tngtech.archunit.core.importer.ImportOption;
+import com.tngtech.archunit.junit.AnalyzeClasses;
+import com.tngtech.archunit.junit.ArchTest;
+import com.tngtech.archunit.lang.ArchRule;
+
+/**
+ * 六角形架構規則（ArchUnit）。任何違反依賴方向的程式碼都會讓建置失敗。
+ */
+@AnalyzeClasses(packages = "{{ base_package }}", importOptions = ImportOption.DoNotIncludeTests.class)
+class ArchitectureTest {
+
+    private static final String BASE = "{{ base_package }}";
+
+    @ArchTest
+    static final ArchRule hexagonal_layers = layeredArchitecture()
+            .consideringOnlyDependenciesInLayers()
+            .withOptionalLayers(true)
+            .layer("Domain").definedBy(BASE + ".domain..")
+            .layer("Application").definedBy(BASE + ".application..")
+            .layer("Web").definedBy(BASE + ".adapter.web..")
+            .layer("Persistence").definedBy(BASE + ".adapter.persistence..")
+            .layer("Bootstrap").definedBy(BASE + ".bootstrap..")
+            .whereLayer("Domain").mayOnlyBeAccessedByLayers("Application", "Web", "Persistence", "Bootstrap")
+            .whereLayer("Application").mayOnlyBeAccessedByLayers("Web", "Persistence", "Bootstrap")
+            .whereLayer("Web").mayOnlyBeAccessedByLayers("Bootstrap")
+            .whereLayer("Persistence").mayOnlyBeAccessedByLayers("Bootstrap");
+
+    @ArchTest
+    static final ArchRule domain_is_framework_free = noClasses()
+            .that().resideInAPackage(BASE + ".domain..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                    "org.springframework..", "jakarta.persistence..", "com.fasterxml.jackson..", "lombok..");
+
+    @ArchTest
+    static final ArchRule application_has_no_spring = noClasses()
+            .that().resideInAPackage(BASE + ".application..")
+            .should().dependOnClassesThat().resideInAnyPackage("org.springframework..", "jakarta.persistence..");
+
+    @ArchTest
+    static final ArchRule adapters_do_not_depend_on_each_other = noClasses()
+            .that().resideInAPackage(BASE + ".adapter.web..")
+            .should().dependOnClassesThat().resideInAPackage(BASE + ".adapter.persistence..");
+}
